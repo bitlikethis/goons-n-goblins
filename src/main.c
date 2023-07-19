@@ -34,19 +34,19 @@ FILE* Fopen(CHAR* filename, CHAR* mode) {
 // app
 typedef struct Row {
   size_t len;
-  char* ptr;
+  char* cols;
 } Row;
 typedef const Row ROW;
 
 Row Row_from_str(char* str) {
   size_t len = strlen(str);
-  char* ptr = Malloc(len * sizeof(char));
+  char* cols = Malloc(len * sizeof(char));
 
-  memcpy(ptr, str, len);
+  memcpy(cols, str, len);
 
   Row new = {
       .len = len,
-      .ptr = ptr,
+      .cols = cols,
   };
   return new;
 }
@@ -54,13 +54,13 @@ Row Row_from_str(char* str) {
 Row Row_from_line(char* line) {
   size_t len = strlen(line) - 1; // remove newline
   line[len] = '\0';
-  char* ptr = Malloc(len * sizeof(char));
+  char* cols = Malloc(len * sizeof(char));
 
-  memcpy(ptr, line, len);
+  memcpy(cols, line, len);
 
   Row new = {
       .len = len,
-      .ptr = ptr,
+      .cols = cols,
   };
   return new;
 }
@@ -68,14 +68,14 @@ Row Row_from_line(char* line) {
 // this could be consumed in rust
 // by not passing a reference
 void Row_free(Row* self) {
-  free(self->ptr);
-  self->ptr = NULL;
+  free(self->cols);
+  self->cols = NULL;
 }
 
 // add newline to print
 void Row_print(ROW* self) {
   char printer[self->len + 1];
-  memcpy(printer, self->ptr, self->len);
+  memcpy(printer, self->cols, self->len);
   printer[self->len] = '\0';
 
   printf("%s\n", printer);
