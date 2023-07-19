@@ -68,8 +68,7 @@ Row Row_from_line(char* line) {
 // this could be consumed in rust
 // by not passing a reference
 void Row_free(Row* self) {
-  free(self->cols);
-  self->cols = NULL;
+  Free(self->cols);
 }
 
 // add newline to print
