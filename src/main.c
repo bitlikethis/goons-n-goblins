@@ -119,7 +119,11 @@ void Board_print(BOARD* self) {
   }
 }
 
- void Board_free(Board* self) {
+void Board_stats(BOARD* self) {
+  printf("width: %lu, height: %lu", self->width, self->height);
+}
+
+void Board_free(Board* self) {
   for (size_t i = 0; i < self->height; i++) {
     Row_free(&self->rows[i]);
   }
@@ -129,6 +133,7 @@ int main(void) {
 
   Board board = Board_from_file("src/map1.txt");
   Board_print(&board);
+  Board_stats(&board);
   Board_free(&board);
 
   return EXIT_SUCCESS;
