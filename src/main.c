@@ -38,7 +38,7 @@ typedef struct Row {
 } Row;
 typedef const Row ROW;
 
-Row Row_from_str(char* str) {
+Row Row_from_str(CHAR* str) {
   size_t len = strlen(str);
   char* cols = Malloc(len * sizeof(char));
 
@@ -51,9 +51,8 @@ Row Row_from_str(char* str) {
   return new;
 }
 
-Row Row_from_line(char* line) {
+Row Row_from_line(CHAR* line) {
   size_t len = strlen(line) - 1; // remove newline
-  line[len] = '\0';
   char* cols = Malloc(len * sizeof(char));
 
   memcpy(cols, line, len);
