@@ -52,8 +52,8 @@ Row Row_from_str(char* str) {
 }
 
 Row Row_from_line(char* line) {
-  size_t len = strlen(line);
-  line[len - 1] = '\0'; // remove newline
+  size_t len = strlen(line) - 1; // remove newline
+  line[len] = '\0';
   char* ptr = Malloc(len * sizeof(char));
 
   memcpy(ptr, line, len);
@@ -99,6 +99,7 @@ Board Board_from_file(CHAR* filename) {
   while (fgets(line, sizeof(line), fp)) {
     Row row = Row_from_line(line);
     rows[height] = row;
+    width = row.len > width ? row.len : width;
     height++;
   }
 
