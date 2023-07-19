@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,22 +6,78 @@
 
 typedef unsigned int uint;
 
+void* oom_guard(void* ptr) {
+  if (ptr == NULL) {
+    fprintf(stderr, "out of memory");
+    exit(1);
+  }
+  return ptr;
+}
+void* fopen_guard(void* ptr) {
+  if (ptr == NULL) {
+    fprintf(stderr, "failed to open");
+    exit(1);
+  }
+  return ptr;
+}
+
+
+typedef struct Row {
+  size_t len;
+  char* ptr;
+} Row;
+typedef const Row ROW;
+
+Row Row_from_str(char str[]) {
+  size_t len = strlen(str);
+  char* ptr = oom_guard(malloc(len * sizeof(char)));
+
+  memcpy(ptr, str, len);
+
+  Row new = {
+      .len = len,
+      .ptr = ptr,
+  };
+  return new;
+}
+
+void Row_free(Row* self) {
+  free(self->ptr);
+  self->ptr = NULL;
+}
+
+void Row_print(ROW* self) {
+  char printer[self->len + 1];
+  memcpy(printer, self->ptr, self->len);
+  printer[self->len] = '\0';
+
+  printf("%s\n", printer);
+}
+
+typedef struct Mask {
+  uint ref_row;
+  uint ref_col;
+  uint rows;
+  uint cols;
+  char** mask;
+} Mask;
+
 typedef struct Board {
-  uint width;
-  uint height;
+  uint rows;
+  uint cols;
   char layout[8][8];
 } Board;
 typedef const Board BOARD;
 
 Board Board_new() {
   Board new = {
-      .width = 8,
-      .height = 8,
+      .rows = 8,
+      .cols = 8,
       .layout =
           {
-              "xx....oo",
-              "xx....oo",
-              "xx....oo",
+              "xx..o.oo",
+              "xx..x.oo",
+              "xx..o.oo",
               "xx....oo",
               "xx....oo",
               "xx....oo",
@@ -41,6 +98,12 @@ void Board_move_mob_to(Board* self, uint mob_row, uint mob_col, uint to_row,
   self->layout[mob_row][mob_col] = '.';
 }
 
+bool Board_compare_mask(BOARD* b, uint row, uint col, Mask* m) {
+  // if (Board_at(b, row, uint col)) {
+  // }
+  return false;
+}
+
 // NOTE: everything should be done as row column
 void Board_move_down_right(Board* self, uint mob_row, uint mob_col, int down,
                            int right) {
@@ -50,7 +113,7 @@ void Board_move_down_right(Board* self, uint mob_row, uint mob_col, int down,
 }
 
 void Board_render_row(BOARD* self, uint row) {
-  size_t padding = 2 * self->width;
+  size_t padding = 2 * self->cols;
   char rend[(padding) + 1];
 
   for (int i = 0; i < padding; i++) {
@@ -63,7 +126,7 @@ void Board_render_row(BOARD* self, uint row) {
 }
 
 void Board_render(BOARD* self) {
-  for (uint row = 0; row < self->height; row++) {
+  for (uint row = 0; row < self->rows; row++) {
     Board_render_row(self, row);
   }
 }
@@ -110,7 +173,37 @@ void Game_take_turn(Game* self, Board* b, char action) {
 // "o is a goblin"
 // "x dies if x is surrounded by o"
 // "o dies if o is surrounded by x"
-void Game_update(Game* self, Board* b) {}
+void Game_update(Game* self, Board* b) {
+  for (uint row = 0; row < b->rows; row++) {
+    for (uint col = 0; col < b->cols; col++) {
+      char piece = Board_at(b, row, col);
+
+      if (piece == 'x') {
+        char surrounded_up_down[3][1] = {
+            {"o"},
+            {"x"},
+            {"o"},
+        };
+
+        // check down/right
+        // if (row == 0 ||
+        //     Board_at(b, row - 1, col) == 'o' && row == b->rows - 1 ||
+        //     Board_at(b, row + 1, col) == 'o') {
+        //   b->layout[row][col] = '.';
+        // }
+      }
+
+      // if (piece == 'o') {
+      //   // check down/right
+      //   if (row == 0 ||
+      //       Board_at(b, row - 1, col) == 'x' && row == b->rows - 1 ||
+      //       Board_at(b, row + 1, col) == 'x') {
+      //     b->layout[row][col] = '.';
+      //   }
+      // }
+    }
+  }
+}
 
 void Game_render(GAME* self, BOARD* b) {
   system("clear");
@@ -128,7 +221,7 @@ int main(int argc, char* argv[]) {
   time_t start_time = time(NULL);
   time_t current_time;
   uint seconds = 1;
-  uint turnc = 4;
+  uint turnc = 1;
   Board board = Board_new();
   Game game = Game_new(&board);
 
@@ -143,22 +236,22 @@ int main(int argc, char* argv[]) {
       if (game.turn <= turnc) {
         // take turn
         // Board_move_mob_to(&board, 0, game.turn - 1, 0, game.turn);
-        switch (game.turn) {
-        case 1:
-          Board_move_down_right(&board, 0, 1, 0, 1);
-          break;
-        case 2:
-          Board_move_down_right(&board, 1, 1, 0, 1);
-          break;
-        case 3:
-          Board_move_down_right(&board, 2, 1, 0, 1);
-          break;
-        case 4:
-          Board_move_down_right(&board, 2, 2, 0, 1);
-          break;
-        default:
-          break;
-        }
+        // switch (game.turn) {
+        // case 1:
+        //   Board_move_down_right(&board, 0, 1, 0, 1);
+        //   break;
+        // case 2:
+        //   Board_move_down_right(&board, 1, 1, 0, 1);
+        //   break;
+        // case 3:
+        //   Board_move_down_right(&board, 2, 1, 0, 1);
+        //   break;
+        // case 4:
+        //   Board_move_down_right(&board, 2, 2, 0, 1);
+        //   break;
+        // default:
+        //   break;
+        // }
         Game_update(&game, &board);
         Game_render(&game, &board);
       } else {
