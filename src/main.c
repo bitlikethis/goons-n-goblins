@@ -31,6 +31,13 @@ FILE* Fopen(CHAR* filename, CHAR* mode) {
   return fp;
 }
 
+typedef struct Rule {
+  size_t inpc;
+  char* inp;
+  size_t outc;
+  char* out;
+} Rule;
+
 // app
 typedef struct Row {
   size_t len;
