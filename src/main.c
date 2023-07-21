@@ -117,6 +117,34 @@ void Board_print(BOARD* self) {
   }
 }
 
+char* Board_slice_str(Board* self, size_t row_start, size_t row_end,
+                  size_t col_start, size_t col_end) {
+  if (row_start > self->height || row_end > self->height ||
+      col_start > self->width || col_end > self->width) {
+    fprintf(stderr, "slice outside of bounds");
+    exit(1);
+  }
+  if (row_start > row_end || col_start > col_end) {
+    fprintf(stderr, "slice start is greater than slice end");
+    exit(1);
+  }
+  char* slice =
+      Malloc((row_end - row_start + 1) * (col_end - col_start) * sizeof(char));
+  size_t slice_idx = 0;
+
+  for (size_t row = row_start; row < row_end; row++) {
+    for (size_t col = col_start; col < col_end; col++) {
+      slice[slice_idx] = self->rows[row].cols[col];
+      slice_idx++;
+    }
+    slice[slice_idx] = '\n';
+    slice_idx++;
+  }
+  slice[slice_idx] = '\0';
+
+  return slice;
+}
+
 void Board_stats(BOARD* self) {
   printf("width: %lu, height: %lu", self->width, self->height);
 }
