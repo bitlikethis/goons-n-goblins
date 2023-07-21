@@ -71,6 +71,12 @@ Row Row_from_line(CHAR* line) {
   return new;
 }
 
+void Row_update_by_rule(Row* self, size_t coli, Rule r) {
+  char* ptr = self->cols;
+  ptr += coli;
+  memcpy(ptr, r.inp, r.inpc);
+}
+
 // this could be consumed in rust
 // by not passing a reference
 void Row_free(Row* self) {
