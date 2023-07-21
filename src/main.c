@@ -118,7 +118,7 @@ void Board_print(BOARD* self) {
 }
 
 char* Board_slice_str(Board* self, size_t row_start, size_t row_end,
-                  size_t col_start, size_t col_end) {
+                      size_t col_start, size_t col_end) {
   if (row_start > self->height || row_end > self->height ||
       col_start > self->width || col_end > self->width) {
     fprintf(stderr, "slice outside of bounds");
