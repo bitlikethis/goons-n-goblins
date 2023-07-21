@@ -130,17 +130,17 @@ char* Board_slice_str(Board* self, size_t row_start, size_t row_end,
   }
   char* slice =
       Malloc((row_end - row_start + 1) * (col_end - col_start) * sizeof(char));
-  size_t slice_idx = 0;
+  size_t slicei = 0;
 
   for (size_t row = row_start; row < row_end; row++) {
     for (size_t col = col_start; col < col_end; col++) {
-      slice[slice_idx] = self->rows[row].cols[col];
-      slice_idx++;
+      slice[slicei] = self->rows[row].cols[col];
+      slicei++;
     }
-    slice[slice_idx] = '\n';
-    slice_idx++;
+    slice[slicei] = '\n';
+    slicei++;
   }
-  slice[slice_idx] = '\0';
+  slice[slicei] = '\0';
 
   return slice;
 }
