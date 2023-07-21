@@ -71,13 +71,13 @@ Row Row_from_line(CHAR* line) {
   return new;
 }
 
-void Row_update_by_rule(Row* self, size_t coli, Rule r) {
-  if (coli + r.inpc > self->len) {
+void Row_update_by_rule(Row* self, size_t col, Rule r) {
+  if (col + r.inpc > self->len) {
     fprintf(stderr, "rule exceeds end of row");
     exit(1);
   }
   char* ptr = self->cols;
-  ptr += coli;
+  ptr += col;
   memcpy(ptr, r.inp, r.inpc);
 }
 
