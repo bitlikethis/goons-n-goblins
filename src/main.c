@@ -72,6 +72,10 @@ Row Row_from_line(CHAR* line) {
 }
 
 void Row_update_by_rule(Row* self, size_t coli, Rule r) {
+  if (coli + r.inpc > self->len) {
+    fprintf(stderr, "rule exceeds end of row");
+    exit(1);
+  }
   char* ptr = self->cols;
   ptr += coli;
   memcpy(ptr, r.inp, r.inpc);
